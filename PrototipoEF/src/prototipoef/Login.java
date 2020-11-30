@@ -5,6 +5,12 @@
  */
 package prototipoef;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.DriverManager;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Brayan Cifuentes
@@ -46,6 +52,11 @@ public class Login extends javax.swing.JFrame {
         jLabel3.setText("Password:");
 
         jButton1.setText("Ingresar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Registrar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -109,6 +120,39 @@ public class Login extends javax.swing.JFrame {
         dispose();
         reg.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        try{
+            Connection cn = DriverManager.getConnection(Principal.Base_de_Datos, Principal.Usuario, Principal.Clave);
+            PreparedStatement pst = cn.prepareStatement("select * from usuario where username = ?");
+            pst.setString(1, txt_usuario.getText().trim());
+            
+            ResultSet rs = pst.executeQuery();
+            
+            PreparedStatement pstC = cn.prepareStatement("select * from usuario where password_u = ?");
+            pstC.setString(1, txt_pass.getText().trim());
+            
+            ResultSet rsC = pstC.executeQuery();
+            
+            if(rs.next()){
+                if(rsC.next())
+                {
+                    JOptionPane.showMessageDialog(null, " "+txt_usuario.getText()+" Bienvenido al Sistema ...");
+                    this.dispose();
+                    Principal p = new Principal();
+                    p.setVisible(true);
+                    
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Usuario no registrado.");
+            }
+            
+        }catch (Exception e)
+        {
+            System.out.println(e);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments

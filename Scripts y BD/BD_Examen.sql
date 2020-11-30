@@ -22,9 +22,11 @@ create table usuario(
 
 create table bitacora_usuario(
 	id_bitacora int primary key auto_increment,
-    id_usuario varchar(10),
-    usuario varchar(35),
-    fecha date
+    usuario varchar(35), -- el usuario de la BD
+    fecha datetime,
+    accion varchar(50)
 )engine = InnoDB default charset=latin1;
 
-select * from usuario;
+-- select * from usuario;
+-- select * from Vista_moneda;
+-- select * from bitacora;
