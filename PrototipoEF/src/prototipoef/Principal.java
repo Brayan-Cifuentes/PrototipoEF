@@ -18,6 +18,10 @@ public class Principal extends javax.swing.JFrame {
         initComponents();
     }
     
+    public static String Base_de_Datos = "jdbc:mysql://localhost/PrototipoEF";
+    public static String Usuario = "root";
+    public static String Clave= "admin";
+    
     private Mantenimiento_Moneda mantenimiento;
     private Bitacora b;
 

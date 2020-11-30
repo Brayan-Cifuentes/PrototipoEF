@@ -5,6 +5,12 @@
  */
 package prototipoef;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Brayan Cifuentes
@@ -40,7 +46,7 @@ public class Mantenimiento_Moneda extends javax.swing.JInternalFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txt_buscar = new javax.swing.JTextField();
         jButton4 = new javax.swing.JButton();
         lbl_estatus = new javax.swing.JLabel();
 
@@ -61,16 +67,37 @@ public class Mantenimiento_Moneda extends javax.swing.JInternalFrame {
         jLabel5.setText("Estatus Moneda:");
 
         jButton1.setText("Insertar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Modificar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Eliminar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jLabel6.setText("ID moneda a buscar:");
 
-        jButton4.setText("Consultar");
+        jButton4.setText("Buscar");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
-        lbl_estatus.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        lbl_estatus.setFont(new java.awt.Font("Microsoft JhengHei UI Light", 1, 14)); // NOI18N
+        lbl_estatus.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -110,7 +137,7 @@ public class Mantenimiento_Moneda extends javax.swing.JInternalFrame {
                                 .addGroup(layout.createSequentialGroup()
                                     .addComponent(jLabel6)
                                     .addGap(33, 33, 33)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(txt_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(layout.createSequentialGroup()
                                     .addComponent(jButton1)
                                     .addGap(18, 18, 18)
@@ -143,7 +170,7 @@ public class Mantenimiento_Moneda extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txt_estatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
-                .addGap(44, 44, 44)
+                .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
@@ -151,16 +178,112 @@ public class Mantenimiento_Moneda extends javax.swing.JInternalFrame {
                 .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jButton4)
                 .addGap(18, 18, 18)
                 .addComponent(lbl_estatus, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        
+        try {
+            Connection cn = DriverManager.getConnection(Principal.Base_de_Datos, Principal.Usuario, Principal.Clave);
+            PreparedStatement pst = cn.prepareStatement("insert into moneda values(?,?,?,?)");
+
+            pst.setString(1, txt_idmoneda.getText().trim());
+            pst.setString(2, txt_moneda.getText().trim());
+            pst.setString(3, txt_tipo.getText().trim());
+            pst.setString(4, txt_estatus.getText().trim());
+            
+                      
+            pst.executeUpdate();
+
+            txt_idmoneda.setText("");
+            txt_moneda.setText("");
+            txt_tipo.setText("");
+            txt_estatus.setText("");
+
+            lbl_estatus.setText("Registro exitoso.");
+        } catch (Exception e) {
+
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        try{
+            Connection cn = DriverManager.getConnection(Principal.Base_de_Datos, Principal.Usuario, Principal.Clave);
+            PreparedStatement pst = cn.prepareStatement("select * from moneda where id_moneda = ?");
+            pst.setString(1, txt_buscar.getText().trim());
+
+            ResultSet rs = pst.executeQuery();
+
+            if(rs.next()){
+                txt_idmoneda.setText(rs.getString("id_moneda"));
+                txt_moneda.setText(rs.getString("nombre_moneda"));
+                txt_tipo.setText(rs.getString("tipo_cambio"));
+                txt_estatus.setText(rs.getString("estatus_moneda"));
+                
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Moneda no registrada");
+            }
+
+        }catch (Exception e){
+
+        }
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        try {
+            String ID = txt_buscar.getText().trim();
+
+            Connection cn = DriverManager.getConnection(Principal.Base_de_Datos, Principal.Usuario, Principal.Clave);
+            PreparedStatement pst = cn.prepareStatement("update moneda set id_moneda = ?, nombre_moneda=?, tipo_cambio=?, estatus_moneda=? where id_moneda = " + ID);
+
+            pst.setString(1, txt_idmoneda.getText().trim());
+            pst.setString(2, txt_moneda.getText().trim());
+            pst.setString(3, txt_tipo.getText().trim());
+            pst.setString(4, txt_estatus.getText().trim());
+            
+           
+            pst.executeUpdate();
+
+            txt_buscar.setText("");
+            lbl_estatus.setText("Modificación exitosa.");
+
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        try {
+
+            Connection cn = DriverManager.getConnection(Principal.Base_de_Datos, Principal.Usuario, Principal.Clave);
+            PreparedStatement pst = cn.prepareStatement("delete from moneda where id_moneda = ?");
+
+            pst.setString(1, txt_buscar.getText().trim());
+            pst.executeUpdate();
+
+            txt_idmoneda.setText("");
+            txt_moneda.setText("");
+            txt_tipo.setText("");
+            txt_estatus.setText("");
+           
+
+            lbl_estatus.setText("Registro eliminado.");
+
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -174,8 +297,8 @@ public class Mantenimiento_Moneda extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel lbl_estatus;
+    private javax.swing.JTextField txt_buscar;
     private javax.swing.JTextField txt_estatus;
     private javax.swing.JTextField txt_idmoneda;
     private javax.swing.JTextField txt_moneda;
